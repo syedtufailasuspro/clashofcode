@@ -1,0 +1,30 @@
+name: Run Judge
+
+on:
+  workflow_dispatch:
+    inputs:
+      solution_path:
+        description: "Path to solution file"
+        required: false
+        default: "solution.py"
+      base_path:
+        description: "Base path (without extension) for .in/.out"
+        required: false
+        default: "tests/case1"
+
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run judge in Docker
+        run: |
+          SOLUTION=${{ inputs.solution_path }}
+          BASE=${{ inputs.base_path }}
+          docker run --rm \
+            -v "$PWD":/app \
+            -w /app \
+            python:3.11 \
+            python judge.py
