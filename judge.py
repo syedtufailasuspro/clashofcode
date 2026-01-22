@@ -20,6 +20,7 @@ response = requests.post("https://emkc.org/api/v2/piston/execute", json={
     "stdin": inp
 })
 
+
 result = response.json()
 print(result)
 output = result["run"]["stdout"].strip()
