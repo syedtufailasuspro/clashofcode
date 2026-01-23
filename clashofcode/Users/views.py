@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
-@csrf_exempt
+
 def login_user(request):
     if request.method == 'POST':
         username = request.POST["username"]
