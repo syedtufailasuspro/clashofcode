@@ -1,0 +1,19 @@
+{
+  "name": "clashofcode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tailwind:build": "npx @tailwindcss/cli -i ./Users/static/src/input.css -o ./Users/static/output.css --minify --content ./Users/templates/**/*.html",
+    "tailwind:watch": "npx @tailwindcss/cli -i ./Users/static/src/input.css -o ./Users/static/output.css --content ./Users/templates/**/*.html --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
+}
