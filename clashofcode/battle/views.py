@@ -1,18 +1,19 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 import uuid
 from django.utils import timezone
 from .models import MatchmakingTicket, Battle
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .queue import join_queue, leave_queue, get_queue_size
+from .models import Battle
+import uuid
 
 # Create your views here.
-def matchmaking():
-    queue = MatchmakingTicket.objects.filter(status= "waiting").order_by("created_at")  
+def join_queue(request):
+    return HttpResponse("queue joined. waiting for players...")
 
-    while queue.count() > 2:
-        user_a_ticket = queue[0]
-        user_b_ticket = queue[1]
-
-        battle = Battle.objects.create(
-            
-        )
+def leave_queue(request):
+    return HttpResponse("queue left. redirecting back...")
