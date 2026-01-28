@@ -7,7 +7,7 @@ from .models import MatchmakingTicket, Battle
 
 # Create your views here.
 def matchmaking():
-    queue = MatchmakingTicket.objects.filter(status= "waiting").order_by("created_at")
+    queue = MatchmakingTicket.objects.filter(status= "waiting").order_by("created_at")  
 
     while queue.count() > 2:
         user_a_ticket = queue[0]
