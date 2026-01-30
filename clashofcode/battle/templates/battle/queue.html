@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Queue - 1v1 Code Battle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --background: #1a1a1a;
+      --foreground: #eff1f6;
+      --card: #282828;
+      --card-border: #3c3c3c;
+      --primary: #2cbb5d;
+      --accent: #ffa116;
+      --destructive: #ef4743;
+      --muted: #8a8a8a;
+      --secondary: #3c3c3c;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 28rem;
+    }
+
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+    }
+
+    /* Searching State */
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 6rem;
+      height: 6rem;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      opacity: 0;
+      animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .pulse-ring:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+
+    .pulse-ring:nth-child(3) {
+      animation-delay: 1s;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(1);
+        opacity: 0.6;
+      }
+      100% {
+        transform: scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    .avatar {
+      position: relative;
+      width: 5rem;
+      height: 5rem;
+      background-color: var(--secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--primary);
+      z-index: 10;
+    }
+
+    .avatar svg {
+      width: 2.5rem;
+      height: 2.5rem;
+      color: var(--muted);
+    }
+
+    .status-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 1rem;
+      height: 1rem;
+      background-color: var(--primary);
+      border-radius: 50%;
+      border: 2px solid var(--card);
+      animation: status-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes status-pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .status-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--foreground);
+      margin-bottom: 0.25rem;
+    }
+
+    .status-subtitle {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .timer {
+      font-family: 'Fira Code', monospace;
+      font-size: 2.25rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .info-panel {
+      width: 100%;
+      background-color: var(--secondary);
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .info-value {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background-color: var(--card-border);
+    }
+
+    .queue-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .queue-count {
+      font-family: 'Fira Code', monospace;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      outline: none;
+    }
+
+    .btn-cancel {
+      background-color: rgba(239, 71, 67, 0.1);
+      color: var(--destructive);
+      border: 1px solid rgba(239, 71, 67, 0.3);
+    }
+
+    .btn-cancel:hover {
+      background-color: rgba(239, 71, 67, 0.2);
+      border-color: rgba(239, 71, 67, 0.5);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--background);
+    }
+
+    .btn-primary:hover {
+      background-color: #25a34f;
+    }
+
+    /* Cancelled State */
+    .cancelled-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .cancelled-container.active {
+      display: flex;
+    }
+
+    .search-container.hidden {
+      display: none;
+    }
+
+    .cancelled-icon {
+      width: 5rem;
+      height: 5rem;
+      background-color: var(--secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cancelled-icon svg {
+      width: 2.5rem;
+      height: 2.5rem;
+      color: var(--muted);
+    }
+
+    .cancelled-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--foreground);
+      margin-bottom: 0.25rem;
+    }
+
+    .cancelled-subtitle {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .btn-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--foreground);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #4a4a4a;
+    }
+
+    /* Loading dots animation */
+    .loading-dots::after {
+      content: '';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: ''; }
+      40% { content: '.'; }
+      60% { content: '..'; }
+      80%, 100% { content: '...'; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <!-- Searching State -->
+      <div class="search-container" id="searchState">
+        <div class="avatar-wrapper">
+          <div class="pulse-ring"></div>
+          <div class="pulse-ring"></div>
+          <div class="pulse-ring"></div>
+          <div class="avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <div class="status-badge"></div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <h2 class="status-title">Queue Joined</h2>
+          <p class="status-subtitle">Searching for opponent<span class="loading-dots"></span></p>
+        </div>
+
+        <div class="timer" id="timer">00:00</div>
+
+        <div class="info-panel">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Mode</span>
+              <span class="info-value">1v1 Ranked</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Difficulty</span>
+              <span class="info-value">Medium</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Est. Wait</span>
+              <span class="info-value" id="estWait">~30s</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="queue-stats">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span><span class="queue-count" id="queueCount">Intializaing..</span> players in queue</span>
+        </div>
+
+        <button class="btn btn-cancel" id="cancelBtn">
+          Cancel Matchmaking
+        </button>
+      </div>
+
+      <!-- Cancelled State -->
+      <div class="cancelled-container" id="cancelledState">
+        <div class="cancelled-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
+
+        <div class="text-center">
+          <h2 class="cancelled-title">Queue Cancelled</h2>
+          <p class="cancelled-subtitle">You have left the matchmaking queue</p>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="rejoinBtn">
+            Rejoin Queue
+          </button>
+          <button class="btn btn-secondary" id="homeBtn">
+            Return to Lobby
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const searchState = document.getElementById('searchState');
+    const cancelledState = document.getElementById('cancelledState');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const rejoinBtn = document.getElementById('rejoinBtn');
+    const homeBtn = document.getElementById('homeBtn');
+    const timerEl = document.getElementById('timer');
+    const queueCountEl = document.getElementById('queueCount');
+    const estWaitEl = document.getElementById('estWait');
+
+    // State
+    let isSearching = true;
+    let seconds = 0;
+    let timerInterval = null;
+    let queueInterval = null;
+
+    // Format time as MM:SS
+    function formatTime(totalSeconds) {
+      const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+      const secs = (totalSeconds % 60).toString().padStart(2, '0');
+      return `${mins}:${secs}`;
+    }
+
+    
+        // Fetch queue count from backend
+    function updateQueueCount() {
+      fetch('/battle/queue_status/')
+        .then(response => response.json())
+        .then(data => {
+          queueCountEl.textContent = data.queue_count;
+          estWaitEl.textContent = data.est_wait;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Start searching
+    function startSearching() {
+      isSearching = true;
+      seconds = 0;
+      timerEl.textContent = '00:00';
+      
+      fetch('/battle/queue/join/').catch(error => console.error('Error:', error));
+      searchState.classList.remove('hidden');
+      cancelledState.classList.remove('active');
+      
+      
+      queueInterval = setInterval(updateQueueCount, 5000);
+    }
+
+    // Cancel searching
+    function cancelSearching() {
+      isSearching = false;
+      
+      clearInterval(timerInterval);
+      clearInterval(queueInterval);
+      fetch('/battle/queue/leave/').catch(error => console.error('Error:', error));
+
+      searchState.classList.add('hidden');
+      cancelledState.classList.add('active');
+    }
+
+    // Event listeners
+    cancelBtn.addEventListener('click', cancelSearching);
+    rejoinBtn.addEventListener('click', startSearching);
+    homeBtn.addEventListener('click', () => {
+      alert('Returning to lobby...');
+      // In a real app, this would navigate to the lobby
+      window.location.href = '/lobby/';
+    });
+
+    // Start on load
+    startSearching();
+  </script>
+</body>
+</html>

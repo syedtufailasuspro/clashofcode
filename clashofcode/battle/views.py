@@ -21,15 +21,14 @@ def join_queue(request):
     
     #ticket
     if MatchmakingTicket.objects.filter(user=user).exists():
-        return HttpResponse("Already in queue")
+        return render(request, "battle/queue.html", {})
     
     ticket = MatchmakingTicket.objects.create(
         user=user,
         ticket_id = uuid.uuid4()
     )
     
-    joinQueue(ticket.ticket_id)
-    return JsonResponse({'status': 'waiting', 'queue_size': getQueue_size()})
+    return render(request, "battle/queue.html", {})
 
 @login_required(login_url='login')
 def leave_queue(request):
@@ -40,9 +39,27 @@ def leave_queue(request):
     if not ticket:
         return JsonResponse({'error': 'Not in queue'}, status=400)
 
-    leaveQueue(ticket.ticket_id)
     ticket.delete()
 
 
     return HttpResponse("queue left. redirecting back...")
 
+@login_required(login_url='login')
+def queue_status(request):
+    queue_count = MatchmakingTicket.objects.count()
+
+    if queue_count < 10:
+        est_wait = "~10s"
+    elif queue_count < 50:
+        est_wait = "~30s"
+    elif queue_count < 100:
+        est_wait = "~1m"
+    else:
+        est_wait = "~2m"
+    
+    print(queue_count)
+    return JsonResponse({
+        'queue_count': queue_count,
+        'est_wait': est_wait,
+        'status': 'searching'
+    })
