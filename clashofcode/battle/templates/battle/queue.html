@@ -479,6 +479,16 @@
 
     // Start on load
     startSearching();
+
+    let pollInterval = setInterval(async () => {
+      const response = await fetch('/battle/battle_status/');
+      const data = await response.json();
+
+      if (data.status === 'found') {
+          clearInterval(pollInterval); // Stop polling
+          window.location.href = data.redirect_url; // Send to battle arena
+      }
+    }, 3000);
   </script>
 </body>
 </html>

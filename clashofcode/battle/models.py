@@ -2,13 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
-class MatchmakingTicket(models.Model):
-    STATUS_CHOICES = [('waiting', 'Waiting'), ('matched', 'Matched'), ('canceled', 'Canceled')]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    ticket_id = models.CharField(max_length=36)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='waiting')
-    created_at = models.DateTimeField(auto_now_add=True)
-
 class Battle(models.Model):
     STATUS_CHOICES = [('live', 'Live'), ('done', 'Done')]
     id = models.CharField(max_length=36, primary_key=True, default=uuid.uuid4, editable=False)
@@ -36,3 +29,11 @@ class Submissions(models.Model):
     language = models.CharField(max_length=20, default='python')
     verdict = models.CharField(max_length=3, choices=VERDICT_CHOICES, null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
+
+class MatchmakingTicket(models.Model):
+    STATUS_CHOICES = [('waiting', 'Waiting'), ('matched', 'Matched'), ('canceled', 'Canceled')]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ticket_id = models.CharField(max_length=36)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='waiting')
+    battle = models.ForeignKey(Battle, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

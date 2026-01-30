@@ -1,16 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 import uuid
 from django.utils import timezone
 from .models import MatchmakingTicket, Battle
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .queue import joinQueue, leaveQueue, getQueue_size
 from .models import Battle
 import uuid
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 
 # Create your views here.
@@ -63,3 +59,58 @@ def queue_status(request):
         'est_wait': est_wait,
         'status': 'searching'
     })
+
+
+@login_required(login_url='login')
+def battle_status(request):
+    ticket = MatchmakingTicket.objects.filter(user=request.user).first()
+    if ticket and ticket.status == 'matched':
+        return JsonResponse({
+            'status': 'found',
+            'battle_id': ticket.battle.id,
+            'redirect_url': f'/battle/{ticket.battle.id}/'
+        })
+
+    battle = join_match()
+
+    if battle:
+        return JsonResponse({
+            'status': 'found',
+            'battle_id': battle.id,
+            'redirect_url': f'/battle/{battle.id}/'
+        })
+    else:
+        return JsonResponse({
+            'status': 'not found'
+        })
+
+
+def join_match():
+    with transaction.atomic():
+        playerTickets = MatchmakingTicket.objects.select_for_update().filter(status = 'waiting').order_by('created_at')[:2]
+        
+        if playerTickets.count() != 2:
+            return None
+    
+        player1Ticket = playerTickets[0]
+        player2Ticket = playerTickets[1]
+
+        currBattle = Battle.objects.create(
+            user_a = player1Ticket.user,
+            user_b = player2Ticket.user,
+        )
+
+        #Update tickets with the battle ID
+        player1Ticket.status = 'matched'
+        player1Ticket.battle = currBattle # Add this field to your model
+        player1Ticket.save()
+
+        player2Ticket.status = 'matched'
+        player2Ticket.battle = currBattle
+        player2Ticket.save()
+
+        return currBattle
+        
+            
+
+
