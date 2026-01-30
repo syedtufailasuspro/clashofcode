@@ -46,7 +46,7 @@ def leave_queue(request):
 
 @login_required(login_url='login')
 def queue_status(request):
-    queue_count = MatchmakingTicket.objects.count()
+    queue_count = MatchmakingTicket.objects.filter(status = "waiting").count()
 
     if queue_count < 10:
         est_wait = "~10s"
