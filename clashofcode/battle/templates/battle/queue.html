@@ -424,7 +424,13 @@
       return `${mins}:${secs}`;
     }
 
+    function updateTimer() {
+      seconds++;
+      timerEl.textContent = formatTime(seconds);
     
+    }
+
+
         // Fetch queue count from backend
     function updateQueueCount() {
       fetch('/battle/queue_status/')
@@ -446,7 +452,7 @@
       searchState.classList.remove('hidden');
       cancelledState.classList.remove('active');
       
-      
+      timerInterval = setInterval(updateTimer, 1000);
       queueInterval = setInterval(updateQueueCount, 5000);
     }
 
