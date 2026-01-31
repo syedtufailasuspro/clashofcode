@@ -2,16 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
-class Battle(models.Model):
-    STATUS_CHOICES = [('live', 'Live'), ('done', 'Done')]
-    id = models.CharField(max_length=36, primary_key=True, default=uuid.uuid4, editable=False)
-    user_a = models.ForeignKey(User, on_delete=models.CASCADE, related_name='battle_a')
-    user_b = models.ForeignKey(User, on_delete=models.CASCADE, related_name='battle_b')
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='live')
-    winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='battles_won')
-    started_at = models.DateTimeField(auto_now_add=True)
-    ended_at = models.DateTimeField(null=True, blank=True)
-
 class Problems(models.Model):
     title = models.CharField(max_length=255)
     statement = models.TextField()
@@ -20,6 +10,20 @@ class Problems(models.Model):
     test_output_path = models.TextField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
+    
+
+class Battle(models.Model):
+    STATUS_CHOICES = [('live', 'Live'), ('done', 'Done')]
+    id = models.CharField(max_length=36, primary_key=True, default=uuid.uuid4, editable=False)
+    user_a = models.ForeignKey(User, on_delete=models.CASCADE, related_name='battle_a')
+    user_b = models.ForeignKey(User, on_delete=models.CASCADE, related_name='battle_b')
+    problem = models.ForeignKey(Problems, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='live')
+    winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='battles_won')
+    started_at = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
 
 class Submissions(models.Model):
     VERDICT_CHOICES = [('AC', 'Accepted'), ('WA', 'Wrong Answer'), ('TLE', 'Time Limit'), ('CE', 'Compile Error')]
