@@ -486,7 +486,13 @@
 
       if (data.status === 'found') {
           clearInterval(pollInterval); // Stop polling
-          window.location.href = data.redirect_url; // Send to battle arena
+          // Send to battle arena
+          //before redirecting to arena, acknowledge that the match was found
+          battle_id = data.battle_id;
+          fetch(`/battle/acknowledge_match/${battle_id}/`)
+              .then(() => {
+                  window.location.href = `/battle/battle_arena/${battle_id}/`;
+              });
       }
     }, 8000);
   </script>
