@@ -103,11 +103,8 @@ def acknowledge_match(request, battle_id):
 
 
 def battle_arena(request,battle_id):
-    return render(request,'battle/battle_arena.html',{'battle_id':battle_id})
+    return render(request,'battle/index.html',{'battle_id':battle_id})
 
 
-def index(request):
-    run_matchmaking.delay()
-    return redirect('index')
 
 

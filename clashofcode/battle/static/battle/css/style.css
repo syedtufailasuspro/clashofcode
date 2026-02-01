@@ -1,0 +1,693 @@
+/* 
+  1v1 Competitive Programming Interface - Core Styles
+  Strict adherence to LeetCode Dark Mode + Premium Motion
+*/
+
+:root {
+    /* Color Palette */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #282828;
+    /* Panels/Cards */
+    --bg-tertiary: #3e3e3e;
+    /* Borders/Separators */
+
+    --text-primary: #eff1f6;
+    --text-secondary: #8a8a8e;
+    --text-code: #d4d4d4;
+    /* Monaco standard */
+
+    /* Accents */
+    --accent-orange: #ffa116;
+    /* LeetCode Orange */
+    --accent-green: #2cbb5d;
+    /* Success */
+    --accent-red: #ef4743;
+    /* Error/Live */
+
+    /* Functional Colors */
+    --border-color: #3e3e3e;
+    --selection-bg: rgba(255, 161, 22, 0.2);
+    --hover-bg: #363636;
+
+    /* Spacing & Layout */
+    --nav-height: 50px;
+    --panel-gap: 8px;
+
+    /* Animation Easing */
+    --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+    --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Global Reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar Styling (Premium & Dark) */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}
+
+/* -------------------
+   1. NAVBAR
+------------------- */
+.navbar {
+    height: var(--nav-height);
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.nav-left,
+.nav-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.nav-right {
+    justify-content: flex-end;
+}
+
+/* Opponent Pulse */
+.opp-status-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-red);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(239, 71, 67, 0.7);
+    animation: pulseRed 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes pulseRed {
+    to {
+        box-shadow: 0 0 0 10px rgba(239, 71, 67, 0);
+    }
+}
+
+.opp-text {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+}
+
+/* VS Badge */
+.vs-text {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.vs-accent {
+    color: var(--accent-orange);
+}
+
+/* Timer */
+.timer-label {
+    color: var(--text-secondary);
+    margin-right: 8px;
+    font-size: 12px;
+}
+
+.timer-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    width: 85px;
+    /* Fixed width to prevent layout shift */
+    text-align: right;
+}
+
+/* -------------------
+   2. WORKSPACE SPLIT LAYOUT
+------------------- */
+.workspace {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    padding: 8px;
+    gap: 8px;
+    /* Adjusted gap between pane and resizer */
+    position: relative;
+    background-color: var(--bg-primary);
+}
+
+.pane {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* LEFT PANE */
+.pane-left {
+    width: 40%;
+    /* Initial width */
+    min-width: 300px;
+}
+
+/* RIGHT PANE */
+.pane-right {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* RESIZER (Shared) */
+.resizer {
+    background: transparent;
+    transition: background 0.2s;
+    z-index: 20;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resizer:hover,
+.resizer.resizing {
+    background: rgba(255, 161, 22, 0.4);
+    /* Yellow glow */
+    box-shadow: 0 0 10px rgba(255, 161, 22, 0.2);
+}
+
+.resizer-horizontal {
+    width: 6px;
+    cursor: col-resize;
+    margin: 0 -3px;
+    /* visual gap adjustment within flex */
+}
+
+.resizer-vertical {
+    height: 6px;
+    width: 100%;
+    cursor: row-resize;
+    margin: -3px 0;
+}
+
+
+/* -------------------
+   3. PROBLEM PANEL (Left)
+------------------- */
+.problem-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 20px 0 20px;
+    flex-shrink: 0;
+}
+
+.problem-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.problem-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.diff-easy {
+    background: rgba(44, 187, 93, 0.15);
+    color: var(--accent-green);
+}
+
+.problem-tabs {
+    display: flex;
+    gap: 24px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding-bottom: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s var(--ease-smooth);
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--text-primary);
+    font-weight: 500;
+}
+
+.problem-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Content Typography */
+.p-text {
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: #c9c9c9;
+}
+
+code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    color: var(--text-primary);
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 24px 0 12px 0;
+    color: var(--text-primary);
+}
+
+/* Sample Cases (Refactored) */
+.sample-case {
+    margin: 20px 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sample-header {
+    background: #333;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.io-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.io-block {
+    padding: 0;
+    border-right: 1px solid var(--border-color);
+    background: #232323;
+    display: flex;
+    flex-direction: column;
+}
+
+.io-block:last-child {
+    border-right: none;
+}
+
+.io-title-row {
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.io-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.copy-btn {
+    font-size: 11px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.copy-btn:hover {
+    opacity: 1;
+    color: var(--text-primary);
+}
+
+.io-content {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    margin: 0;
+    padding: 12px;
+    flex: 1;
+}
+
+.explanation-box {
+    background: rgba(255, 161, 22, 0.05);
+    /* very faint orange tint */
+    border-left: 3px solid var(--accent-orange);
+    padding: 10px 16px;
+    margin-top: 20px;
+    border-radius: 0 4px 4px 0;
+}
+
+/* -------------------
+   4. RIGHT PANE (Editor)
+------------------- */
+.editor-section {
+    /* Flex grow handled via JS resizing */
+    height: 60%;
+    /* Initial height */
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--border-color);
+    background: #1e1e1e;
+}
+
+.editor-toolbar {
+    height: 40px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    background-color: var(--bg-secondary);
+    flex-shrink: 0;
+}
+
+.lang-select {
+    background: transparent;
+    color: var(--text-primary);
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+}
+
+.lang-select option {
+    background-color: var(--bg-secondary);
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.icon-btn:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+/* Monaco Editable */
+.editable-monaco {
+    flex: 1;
+    display: flex;
+    background-color: #1e1e1e;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding-top: 10px;
+    overflow: hidden;
+}
+
+.line-numbers {
+    width: 45px;
+    text-align: right;
+    color: #858585;
+    padding-right: 15px;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    line-height: 20px;
+    user-select: none;
+    background: #1e1e1e;
+}
+
+.line-numbers span {
+    display: block;
+    height: 20px;
+}
+
+.code-area-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #d4d4d4;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 20px;
+    padding-left: 15px;
+    outline: none;
+    resize: none;
+    white-space: pre;
+    overflow: auto;
+}
+
+
+/* -------------------
+   5. BOTTOM SECTION (Test Cases)
+------------------- */
+.bottom-section {
+    flex: 1;
+    /* Takes remaining space */
+    min-height: 100px;
+    background-color: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.testcase-panel-header {
+    height: 36px;
+    background: #333;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.tc-tabs {
+    display: flex;
+    gap: 2px;
+    height: 100%;
+}
+
+.tc-tab {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    padding: 0 12px;
+    cursor: pointer;
+    height: 100%;
+    position: relative;
+    border-top: 2px solid transparent;
+}
+
+.tc-tab.active {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    border-top-color: var(--accent-orange);
+}
+
+.testcase-body {
+    flex: 1;
+    padding: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.tc-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* CodeChef Style Split Input/Output */
+.tc-split-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    height: 100%;
+}
+
+.tc-box {
+    display: flex;
+    flex-direction: column;
+    background: #232323;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.tc-box label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.tc-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    resize: none;
+    outline: none;
+}
+
+.tc-textarea.readonly {
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+/* Action Footer */
+.action-bar-footer {
+    height: 50px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background-color: var(--bg-secondary);
+    flex-shrink: 0;
+}
+
+.btn-console {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-console:hover {
+    color: var(--text-primary);
+}
+
+.run-submit-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-run,
+.btn-submit {
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s;
+}
+
+.btn-run {
+    background-color: #3e3e3e;
+    color: var(--text-primary);
+}
+
+.btn-run:hover {
+    background-color: #4e4e4e;
+}
+
+.btn-submit {
+    background-color: var(--accent-green);
+    color: white;
+}
+
+.btn-submit:hover {
+    background-color: #26a552;
+}
+
+.btn-run:active,
+.btn-submit:active {
+    transform: scale(0.96);
+}
+
+/* Animation Utils */
+.fade-in {
+    animation: fadeIn 0.3s var(--ease-smooth) forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hidden {
+    display: none !important;
+}

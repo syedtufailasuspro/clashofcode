@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>1v1 Competitive Programming</title>
+
+    <!-- Fonts: Inter (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{% static 'battle/css/style.css' %}">
+
+    <style>
+        /* Critical Path CSS to prevent FOUC */
+        body {
+            background-color: #1a1a1a;
+            color: #eff1f6;
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+            /* App-like feel */
+        }
+    </style>
+</head>
+
+<body>
+    {% block content %}
+    {% endblock %}
+
+    <!-- Core JS -->
+    <script type="module" src="{% static 'battle/js/script.js' %}"></script>
+</body>
+
+</html>

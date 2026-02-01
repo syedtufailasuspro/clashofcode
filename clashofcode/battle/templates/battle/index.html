@@ -1,0 +1,204 @@
+{% extends 'battle/base.html' %}
+{% load static %}
+
+{% block title %}Battle - Clash of Code{% endblock %}
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-left">
+        <div class="opp-status-container">
+            <div class="pulse-dot"></div>
+            <span class="opp-text">OPP LIVE ACTIONS</span>
+        </div>
+    </div>
+
+    <div class="nav-center">
+        <span class="vs-text">YOU <span class="vs-accent">VS</span> OPP</span>
+    </div>
+
+    <div class="nav-right">
+        <span class="timer-label">TIME LEFT:</span>
+        <span class="timer-value" id="timer">01:45:32</span>
+    </div>
+</nav>
+
+<!-- Main Workspace -->
+<div class="workspace">
+    <!-- Left Pane: Problem View -->
+    <div class="pane pane-left" id="leftPane">
+        <div class="problem-header">
+            <div class="problem-title-row">
+                <h1 class="problem-title">1. Two Sum</h1>
+                <span class="badge diff-easy">Easy</span>
+            </div>
+
+            <div class="problem-tabs">
+                <button class="tab-btn active" data-tab="desc">Description</button>
+                <!-- Editorial Removed -->
+                <button class="tab-btn" data-tab="submissions">Submissions</button>
+            </div>
+        </div>
+
+        <div class="problem-content scroll-container">
+            <!-- Problem Description Content -->
+            <div id="desc" class="tab-content active">
+                <p class="p-text">Given an array of integers <code>nums</code> and an integer <code>target</code>,
+                    return <em>indices of the two numbers such that they add up to <code>target</code></em>.</p>
+                <p class="p-text">You may assume that each input would have <strong>exactly one solution</strong>, and
+                    you may not use the *same* element twice.</p>
+
+                <h3 class="section-title">Input Format</h3>
+                <p class="p-text">The first line contains an integer <code>N</code>, denoting the size of the
+                    array.<br>The second line contains <code>N</code> space-separated integers.<br>The third line
+                    contains the target integer.</p>
+
+                <h3 class="section-title">Output Format</h3>
+                <p class="p-text">Print two space-separated integers representing the indices.</p>
+
+                <!-- Refactored Sample Case 1 -->
+                <div class="sample-case">
+                    <div class="sample-header">
+                        <span>Sample 1</span>
+                    </div>
+                    <div class="io-grid">
+                        <div class="io-block">
+                            <div class="io-title-row">
+                                <span class="io-label">Input</span>
+                                <span class="copy-btn" data-target="input">Copy</span>
+                            </div>
+                            <pre class="io-content">4
+2 7 11 15
+9</pre>
+                        </div>
+                        <div class="io-block">
+                            <div class="io-title-row">
+                                <span class="io-label">Output</span>
+                                <span class="copy-btn" data-target="output">Copy</span>
+                            </div>
+                            <pre class="io-content">0 1</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Refactored Sample Case 2 -->
+                <div class="sample-case">
+                    <div class="sample-header">
+                        <span>Sample 2</span>
+                    </div>
+                    <div class="io-grid">
+                        <div class="io-block">
+                            <div class="io-title-row">
+                                <span class="io-label">Input</span>
+                                <span class="copy-btn" data-target="input">Copy</span>
+                            </div>
+                            <pre class="io-content">3
+3 2 4
+6</pre>
+                        </div>
+                        <div class="io-block">
+                            <div class="io-title-row">
+                                <span class="io-label">Output</span>
+                                <span class="copy-btn" data-target="output">Copy</span>
+                            </div>
+                            <pre class="io-content">1 2</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explanation-box">
+                    <h3 class="section-title">Explanation</h3>
+                    <p class="p-text">Because nums[0] + nums[1] == 9, we return [0, 1].</p>
+                </div>
+            </div>
+
+            <!-- Submissions Content Placeholder -->
+            <div id="submissions" class="tab-content hidden">
+                <div class="submission-list">
+                    <p class="p-text" style="color: var(--text-secondary); text-align: center; margin-top: 20px;">No
+                        submissions yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resizer Handle Horizontal -->
+    <div class="resizer resizer-horizontal" id="dragHandle"></div>
+
+    <!-- Right Pane: Code Editor & Test Cases -->
+    <div class="pane pane-right" id="rightPane">
+        <!-- Editor Section -->
+        <div class="editor-section" id="editorSection">
+            <div class="editor-toolbar">
+                <div class="lang-selector-container">
+                    <select class="lang-select">
+                        <option value="python">Python 3</option>
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                    </select>
+                </div>
+                <div class="editor-actions">
+                    <button class="icon-btn" title="Settings">⚙️</button>
+                    <button class="icon-btn" title="Reset Code">↺</button>
+                </div>
+            </div>
+
+            <!-- Editable Monaco-like Area -->
+            <div class="monaco-placeholder editable-monaco">
+                <div class="line-numbers" id="lineNumbers">
+                    <span>1</span><span>2</span><span>3</span><span>4</span>
+                </div>
+                <textarea class="code-area-input" id="codeEditor" spellcheck="false">class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        # Write your code here
+        pass</textarea>
+            </div>
+        </div>
+
+        <!-- Vertical Resize Handle -->
+        <div class="resizer resizer-vertical" id="dragHandleVertical"></div>
+
+        <!-- Bottom Section: Test Cases (CodeChef Style) -->
+        <div class="bottom-section" id="bottomSection">
+            <div class="testcase-panel-header">
+                <div class="tc-tabs">
+                    <button class="tc-tab active" data-target="tc-input">Testcase</button>
+                    <button class="tc-tab" data-target="tc-result">Test Result</button>
+                </div>
+            </div>
+
+            <div class="testcase-body">
+                <!-- Custom Input View -->
+                <div id="tc-input" class="tc-view active">
+                    <div class="tc-split-view">
+                        <div class="tc-box">
+                            <label class="io-label">Custom Input</label>
+                            <textarea class="tc-textarea" spellcheck="false">4
+2 7 11 15
+9</textarea>
+                        </div>
+                        <div class="tc-box">
+                            <label class="io-label">Output</label>
+                            <textarea class="tc-textarea readonly" readonly spellcheck="false"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Result View -->
+                <div id="tc-result" class="tc-view hidden">
+                    <div class="tc-result-placeholder">
+                        <p class="p-text" style="color: var(--text-secondary);">Run code to see results</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar-footer">
+                <button class="btn-console">Console</button>
+                <div class="run-submit-group">
+                    <button class="btn-run">Run</button>
+                    <button class="btn-submit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
