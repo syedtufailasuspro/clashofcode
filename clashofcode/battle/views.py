@@ -103,7 +103,16 @@ def acknowledge_match(request, battle_id):
 
 
 def battle_arena(request,battle_id):
-    return render(request,'battle/index.html',{'battle_id':battle_id})
+    battle = Battle.objects.filter(id=battle_id).first()
+    if not battle:
+        return HttpResponse("Battle does not exist")
+    
+    if battle.status in ('done', 'Done'):
+        return HttpResponse("Battle is done for. Go find a job")
+    
+    question = battle.problem
+
+    return render(request,'battle/index.html',{'battle_id':battle_id, 'question':question})
 
 
 

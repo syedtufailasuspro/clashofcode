@@ -28,8 +28,8 @@
     <div class="pane pane-left" id="leftPane">
         <div class="problem-header">
             <div class="problem-title-row">
-                <h1 class="problem-title">1. Two Sum</h1>
-                <span class="badge diff-easy">Easy</span>
+                <h1 class="problem-title" id="problemTitle"><span id="problemId">{{ question.id }}.</span>{{ question.title }}</h1>
+                <span class="badge diff-easy" id="problemDifficulty">Easy</span>
             </div>
 
             <div class="problem-tabs">
@@ -42,23 +42,20 @@
         <div class="problem-content scroll-container">
             <!-- Problem Description Content -->
             <div id="desc" class="tab-content active">
-                <p class="p-text">Given an array of integers <code>nums</code> and an integer <code>target</code>,
-                    return <em>indices of the two numbers such that they add up to <code>target</code></em>.</p>
-                <p class="p-text">You may assume that each input would have <strong>exactly one solution</strong>, and
-                    you may not use the *same* element twice.</p>
+                <div class="p-text">
+                    {{ question.description|safe }}
+                </div>
 
                 <h3 class="section-title">Input Format</h3>
-                <p class="p-text">The first line contains an integer <code>N</code>, denoting the size of the
-                    array.<br>The second line contains <code>N</code> space-separated integers.<br>The third line
-                    contains the target integer.</p>
+                <p class="p-text">{{ question.input_format|safe }}</p>
 
                 <h3 class="section-title">Output Format</h3>
-                <p class="p-text">Print two space-separated integers representing the indices.</p>
+                <p class="p-text">{{ question.output_format|safe }}</p>
 
-                <!-- Refactored Sample Case 1 -->
+                {% for sample in question.samples %}
                 <div class="sample-case">
                     <div class="sample-header">
-                        <span>Sample 1</span>
+                        <span>Sample {{ forloop.counter }}</span>
                     </div>
                     <div class="io-grid">
                         <div class="io-block">
@@ -66,49 +63,25 @@
                                 <span class="io-label">Input</span>
                                 <span class="copy-btn" data-target="input">Copy</span>
                             </div>
-                            <pre class="io-content">4
-2 7 11 15
-9</pre>
+                            <pre class="io-content">{{ sample.input }}</pre>
                         </div>
                         <div class="io-block">
                             <div class="io-title-row">
                                 <span class="io-label">Output</span>
                                 <span class="copy-btn" data-target="output">Copy</span>
                             </div>
-                            <pre class="io-content">0 1</pre>
+                            <pre class="io-content">{{ sample.output }}</pre>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
 
-                <!-- Refactored Sample Case 2 -->
-                <div class="sample-case">
-                    <div class="sample-header">
-                        <span>Sample 2</span>
-                    </div>
-                    <div class="io-grid">
-                        <div class="io-block">
-                            <div class="io-title-row">
-                                <span class="io-label">Input</span>
-                                <span class="copy-btn" data-target="input">Copy</span>
-                            </div>
-                            <pre class="io-content">3
-3 2 4
-6</pre>
-                        </div>
-                        <div class="io-block">
-                            <div class="io-title-row">
-                                <span class="io-label">Output</span>
-                                <span class="copy-btn" data-target="output">Copy</span>
-                            </div>
-                            <pre class="io-content">1 2</pre>
-                        </div>
-                    </div>
-                </div>
-
+                {% if question.explanation %}
                 <div class="explanation-box">
                     <h3 class="section-title">Explanation</h3>
-                    <p class="p-text">Because nums[0] + nums[1] == 9, we return [0, 1].</p>
+                    <p class="p-text">{{ question.explanation|safe }}</p>
                 </div>
+                {% endif %}
             </div>
 
             <!-- Submissions Content Placeholder -->

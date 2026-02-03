@@ -4,10 +4,12 @@ import uuid
 
 class Problems(models.Model):
     title = models.CharField(max_length=255)
-    statement = models.TextField()
+    description = models.TextField()
     difficulty = models.CharField(max_length=10, choices=[('easy', 'Easy'), ('medium', 'Medium'), ('hard', 'Hard')])
-    test_input_path = models.TextField(max_length=255)
-    test_output_path = models.TextField(max_length=255)
+    input_format = models.TextField(default="No format provided")
+    output_format = models.TextField(default="No format provided")
+    samples = models.JSONField(default=list)
+    explanation = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
