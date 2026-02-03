@@ -191,7 +191,7 @@ function initEditor() {
  */
 function initTimer() {
     const timerEl = document.getElementById('timer');
-    let totalSeconds = 1 * 3600 + 45 * 60 + 32;
+    let totalSeconds = 0 * 3600 + 15 * 60 + 0;
 
     setInterval(() => {
         if (totalSeconds > 0) {
