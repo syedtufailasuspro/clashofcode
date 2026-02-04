@@ -27,15 +27,6 @@ class Battle(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     ended_at = models.DateTimeField(null=True, blank=True)
 
-class Submissions(models.Model):
-    VERDICT_CHOICES = [('AC', 'Accepted'), ('WA', 'Wrong Answer'), ('TLE', 'Time Limit'), ('CE', 'Compile Error')]
-    problem = models.ForeignKey(Problems, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    code = models.TextField()
-    language = models.CharField(max_length=20, default='python')
-    verdict = models.CharField(max_length=3, choices=VERDICT_CHOICES, null=True, blank=True)
-    submitted_at = models.DateTimeField(auto_now_add=True)
-
 class MatchmakingTicket(models.Model):
     STATUS_CHOICES = [('waiting', 'Waiting'), ('matched', 'Matched'), ('canceled', 'Canceled')]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
