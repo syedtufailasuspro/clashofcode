@@ -102,17 +102,23 @@ def acknowledge_match(request, battle_id):
 
 
 
+@login_required(login_url='login')
 def battle_arena(request,battle_id):
     battle = Battle.objects.filter(id=battle_id).first()
     if not battle:
         return HttpResponse("Battle does not exist")
     
-    if battle.status in ('done', 'Done'):
+    if battle.status.lower() == 'done':
         return HttpResponse("Battle is done for. Go find a job")
     
+    if request.user != battle.user_a and request.user != battle.user_b:
+        return HttpResponse("Cheating User? Yes Papa!")
+    
     question = battle.problem
+    user_a = battle.user_a if request.user == battle.user_a else battle.user_b
+    user_b = battle.user_a if user_a != battle.user_a else battle.user_b
 
-    return render(request,'battle/index.html',{'battle_id':battle_id, 'question':question})
+    return render(request,'battle/index.html',{'battle_id':battle_id, 'question':question, 'user_a':user_a, 'user_b':user_b})
 
 
 
