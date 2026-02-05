@@ -219,7 +219,7 @@ function runCode() {
     const code = document.getElementById("codeEditor").value;
     const battle_id = document.getElementById("battleId").value;
 
-    fetch(`/judge/run_code/` , {
+    fetch(`/judge/submit_code/` , {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
