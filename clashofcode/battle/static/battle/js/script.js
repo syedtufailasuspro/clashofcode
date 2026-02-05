@@ -207,3 +207,50 @@ function initTimer() {
 function pad(val) {
     return val < 10 ? '0' + val : val;
 }
+
+/**
+ * 6. Run Code
+ */
+
+function runCode() {
+    console.log('Code intialization bruh');
+    const language = document.getElementById("languageSelect").selectedOptions[0].getAttribute('value');
+    const version = document.getElementById("languageSelect").selectedOptions[0].getAttribute('version');
+    const code = document.getElementById("codeEditor").value;
+    const battle_id = document.getElementById("battleId").value;
+
+    fetch(`/judge/run_code/` , {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            language : language,
+            version:version,
+            code: code,
+            battle_id: battle_id
+        })
+    })
+
+    console.log('Code submitted for execution');
+}
+const submitBtn = document.getElementById('btn-submit');
+if (submitBtn) {
+    submitBtn.addEventListener('click', runCode);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

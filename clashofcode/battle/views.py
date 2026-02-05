@@ -118,7 +118,7 @@ def battle_arena(request,battle_id):
     user_a = battle.user_a if request.user == battle.user_a else battle.user_b
     user_b = battle.user_a if user_a != battle.user_a else battle.user_b
 
-    return render(request,'battle/index.html',{'battle_id':battle_id, 'question':question, 'user_a':user_a, 'user_b':user_b})
+    return render(request,'battle/index.html',{'battle':battle, 'question':question, 'user_a':user_a, 'user_b':user_b})
 
 
 

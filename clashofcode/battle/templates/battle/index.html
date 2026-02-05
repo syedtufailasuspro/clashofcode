@@ -3,6 +3,8 @@
 
 {% block title %}Battle - Clash of Code{% endblock %}
 {% block content %}
+
+<input type="hidden" id="battleId" value="{{ battle.id }}">
 <!-- Navbar -->
 <nav class="navbar">
     <div class="nav-left">
@@ -103,10 +105,10 @@
         <div class="editor-section" id="editorSection">
             <div class="editor-toolbar">
                 <div class="lang-selector-container">
-                    <select class="lang-select">
-                        <option value="python">Python 3</option>
-                        <option value="cpp">C++</option>
-                        <option value="java">Java</option>
+                    <select class="lang-select", id="languageSelect">
+                        <option value="python" version="3.10.0">Python 3</option>
+                        <option value="cpp" version="11.2.0">C++</option>
+                        <option value="java" version="17.0.1">Java</option>
                     </select>
                 </div>
                 <div class="editor-actions">
@@ -143,12 +145,12 @@
                 <div id="tc-input" class="tc-view active">
                     <div class="tc-split-view">
                         <div class="tc-box">
-                            <label class="io-label">Custom Input</label>
+                            <label class="io-label" id="customInputLabel">Custom Input</label>
                             <textarea class="tc-textarea" spellcheck="false">
 </textarea>
                         </div>
                         <div class="tc-box">
-                            <label class="io-label">Output</label>
+                            <label class="io-label" id="outputLabel">Output</label>
                             <textarea class="tc-textarea readonly" readonly spellcheck="false"></textarea>
                         </div>
                     </div>
@@ -165,8 +167,8 @@
             <div class="action-bar-footer">
                 <button class="btn-console">Console</button>
                 <div class="run-submit-group">
-                    <button class="btn-run">Run</button>
-                    <button class="btn-submit">Submit</button>
+                    <button class="btn-run" id="btn-run">Run</button>
+                    <button class="btn-submit" id="btn-submit">Submit</button>
                 </div>
             </div>
         </div>
