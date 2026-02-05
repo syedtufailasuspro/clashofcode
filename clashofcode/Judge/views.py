@@ -60,7 +60,12 @@ def run_code(request):
         })
 
     result = response.json()
-
     print(result)
+    errorMessage = result["run"]["stderr"].strip()
     
-    return JsonResponse({'status':200})
+    if errorMessage:
+        return JsonResponse({"status":400, 'output':errorMessage})
+    
+    output = result["run"]["stdout"].strip()
+    
+    return JsonResponse({'status':200, 'output':output})

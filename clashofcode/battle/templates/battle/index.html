@@ -136,7 +136,7 @@
             <div class="testcase-panel-header">
                 <div class="tc-tabs">
                     <button class="tc-tab active" data-target="tc-input">Testcase</button>
-                    <button class="tc-tab" data-target="tc-result">Test Result</button>
+                    
                 </div>
             </div>
 
@@ -151,17 +151,11 @@
                         </div>
                         <div class="tc-box">
                             <label class="io-label" id="outputLabel">Output</label>
-                            <textarea class="tc-textarea readonly" readonly spellcheck="false"></textarea>
+                            <textarea class="tc-textarea readonly" id="customOutput" readonly spellcheck="false">Run code to see results</textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- Test Result View -->
-                <div id="tc-result" class="tc-view hidden">
-                    <div class="tc-result-placeholder">
-                        <p class="p-text" style="color: var(--text-secondary);">Run code to see results</p>
-                    </div>
-                </div>
             </div>
 
             <div class="action-bar-footer">

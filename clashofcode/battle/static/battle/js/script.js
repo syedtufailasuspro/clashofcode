@@ -236,28 +236,43 @@ function submitCode() {
     console.log('Code submitted for execution');
 }
 
-function runCode() {
+async function runCode() {
     console.log('Code intialization bruh for testcase running');
     const language = document.getElementById("languageSelect").selectedOptions[0].getAttribute('value');
     const version = document.getElementById("languageSelect").selectedOptions[0].getAttribute('version');
     const code = document.getElementById("codeEditor").value;
     const battle_id = document.getElementById("battleId").value;
     const input = document.getElementById("customInput").value;
+    const outputArea = document.getElementById("customOutput");
 
-    fetch(`/judge/run_code/` , {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({
-            language : language,
-            version:version,
-            code: code,
-            battle_id: battle_id,
-            input: input,
-        })
-    })
+    try {
+        const response = await fetch(`/judge/run_code/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                language: language,
+                version: version,
+                code: code,
+                battle_id: battle_id,
+                input: input,
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const data = await response.json(); // 👈 THIS is the output
+        outputArea.value = data.output;
+
+    } catch (error) {
+        console.error("Error running code:", error);
+    }
+
+
 
     console.log('Code submitted for execution');
 }
