@@ -212,8 +212,8 @@ function pad(val) {
  * 6. Run Code
  */
 
-function runCode() {
-    console.log('Code intialization bruh');
+function submitCode() {
+    console.log('Code intialization bruh for submission');
     const language = document.getElementById("languageSelect").selectedOptions[0].getAttribute('value');
     const version = document.getElementById("languageSelect").selectedOptions[0].getAttribute('version');
     const code = document.getElementById("codeEditor").value;
@@ -235,9 +235,43 @@ function runCode() {
 
     console.log('Code submitted for execution');
 }
+
+function runCode() {
+    console.log('Code intialization bruh for testcase running');
+    const language = document.getElementById("languageSelect").selectedOptions[0].getAttribute('value');
+    const version = document.getElementById("languageSelect").selectedOptions[0].getAttribute('version');
+    const code = document.getElementById("codeEditor").value;
+    const battle_id = document.getElementById("battleId").value;
+    const input = document.getElementById("customInput").value;
+
+    fetch(`/judge/run_code/` , {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            language : language,
+            version:version,
+            code: code,
+            battle_id: battle_id,
+            input: input,
+        })
+    })
+
+    console.log('Code submitted for execution');
+}
+
+
 const submitBtn = document.getElementById('btn-submit');
+const runBtn = document.getElementById('btn-run');
+
 if (submitBtn) {
-    submitBtn.addEventListener('click', runCode);
+    submitBtn.addEventListener('click', submitCode);
+}
+
+if (runBtn) {
+    runBtn.addEventListener('click', runCode);
 }
 
 function getCookie(name) {

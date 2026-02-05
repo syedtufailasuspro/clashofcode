@@ -36,6 +36,31 @@ def submit_code(request):
     
     return JsonResponse({'status':200})
 
+
 @login_required(login_url='login')
 def run_code(request):
-    pass
+    data = json.loads(request.body)
+    #battle_id, code, language, problem, user
+    battle_id = data["battle_id"]
+    battle = Battle.objects.filter(id=battle_id).first()
+    language = data["language"]
+    version = data["version"]
+    problem = battle.problem
+    code = data["code"]
+    inp = data["input"]
+
+    if not inp:
+        return JsonResponse({"status":400, "message":"Missing Input"})
+
+    response = requests.post("https://emkc.org/api/v2/piston/execute", json={
+        "language": language,
+        "version": version,
+        "files": [{"content": code}],
+        "stdin": inp
+        })
+
+    result = response.json()
+
+    print(result)
+    
+    return JsonResponse({'status':200})
