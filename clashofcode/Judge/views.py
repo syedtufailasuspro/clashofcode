@@ -23,12 +23,6 @@ def run_code(request):
         inp = sample['input']
         expected = sample['output']
 
-        print(code)
-        print(inp)
-        print(expected)
-        print(language)
-        print(version)
-
         response = requests.post("https://emkc.org/api/v2/piston/execute", json={
         "language": language,
         "version": version,
