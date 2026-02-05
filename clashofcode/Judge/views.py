@@ -6,6 +6,23 @@ import requests
 from django.http import HttpResponse, JsonResponse
 # Create your views here.
 
+LANG_FILE_MAP = {
+    "python": "main.py",
+    "py": "main.py",
+
+    "cpp": "main.cpp",
+    "c++": "main.cpp",
+
+    "c": "main.c",
+
+    "java": "Main.java",
+
+    "go": "main.go",
+
+    "javascript": "main.js",
+    "js": "main.js",
+}
+
 
 @login_required(login_url='login')
 def submit_code(request):
@@ -52,10 +69,15 @@ def run_code(request):
     if not inp:
         return JsonResponse({"status":400, "message":"Missing Input"})
 
+    filename = LANG_FILE_MAP[language]
+
     response = requests.post("https://emkc.org/api/v2/piston/execute", json={
         "language": language,
-        "version": version,
-        "files": [{"content": code}],
+        "version": '*',
+        "files": [{
+            "name": filename,
+            "content": code
+            }],
         "stdin": inp
         })
 
