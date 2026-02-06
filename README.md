@@ -228,7 +228,7 @@ npm run tailwind:build
 
 Responses are JSON with `status` and `output` or `message` fields.
 
-## Current Limitations / Pending Items
+## Pending Items/ Under Development 
 - No WebSocket routing yet (Channels is installed, HTTP only).
 - No hidden tests / scoring logic for submissions.
 - Minimal battle state tracking (no timeout or live result sync).
