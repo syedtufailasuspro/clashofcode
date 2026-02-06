@@ -1,4 +1,4 @@
-# ClashOfCode
+# ClashOfCode (In Development 50% done)
 
 A real-time 1v1 competitive programming arena built on Django, Celery, and Redis. The project focuses on matchmaking, live battle flow, and automated judging via the Piston API. Channels is wired at the ASGI layer, and the system is structured to evolve into WebSocket-driven live updates.
 
