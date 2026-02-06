@@ -13,6 +13,9 @@ A real-time 1v1 competitive programming arena built on Django, Celery, and Redis
 ### Judge Results
 ![Judge results](docs/screenshots/judge_results.png)
 
+### Redis + Docker (Matchmaking Background Worker)
+![Redis and Docker](docs/screenshots/redis_docker.png)
+
 ### Auth (Login / Signup)
 ![Auth screens](docs/screenshots/auth.png)
 
