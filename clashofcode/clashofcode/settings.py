@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+
     'django_celery_beat',
     "django.contrib.admin",
     "django.contrib.auth",
@@ -38,11 +40,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    
     'Users',
     'battle',
     'Judge',
     
 ]
+
+
+ASGI_APPLICATION = 'clashofcode.asgi.application'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
