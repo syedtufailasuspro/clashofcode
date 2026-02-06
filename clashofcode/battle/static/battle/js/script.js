@@ -209,32 +209,55 @@ function pad(val) {
 }
 
 /**
- * 6. Run Code
+ * 6. Submit Code
  */
 
-function submitCode() {
+async function submitCode() {
     console.log('Code intialization bruh for submission');
     const language = document.getElementById("languageSelect").selectedOptions[0].getAttribute('value');
     const version = document.getElementById("languageSelect").selectedOptions[0].getAttribute('version');
     const code = document.getElementById("codeEditor").value;
     const battle_id = document.getElementById("battleId").value;
 
-    fetch(`/judge/submit_code/` , {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({
-            language : language,
-            version:version,
-            code: code,
-            battle_id: battle_id
-        })
-    })
+    try{
+        const response = await fetch(`/judge/submit_code/` , {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                language : language,
+                version:version,
+                code: code,
+                battle_id: battle_id
+            })
+        });
 
-    console.log('Code submitted for execution');
+        if (!response.ok) {
+                throw new Error("Server error");
+            }
+            
+        console.log('Code submitted for execution');
+
+        const data = await response.json();
+        
+        if (data.status === 'AC') {
+            alert('Passed all Test Cases successfully!');
+        } else {
+            alert(data.message);
+        }
+        
+        
+
+    } catch (error) {
+        console.error("Error submitting code:", error);
+    }
 }
+
+/**
+ * 7. Run Code
+ */
 
 async function runCode() {
     console.log('Code intialization bruh for testcase running');
@@ -289,6 +312,8 @@ if (runBtn) {
     runBtn.addEventListener('click', runCode);
 }
 
+
+// Get cookie function for CSRF token retrieval
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
