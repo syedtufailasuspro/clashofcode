@@ -9,8 +9,30 @@ document.addEventListener('DOMContentLoaded', () => {
     initCopyAction();
     initTimer();
     initEditor();
+    initRealtimeBattle();
     console.log('1v1 Interface Ready');
 });
+
+const TYPING_THROTTLE_MS = 800;
+const TYPING_TIMEOUT_MS = 2500;
+
+const ACTION_LABELS = {
+    RUNNING: 'Running code',
+    SUBMITTED: 'Submitted code',
+    FAILED_TC1: 'Failed on test 1',
+    TLE: 'TLE',
+    MLE: 'MLE',
+    WA: 'Wrong answer',
+    AC: 'Accepted',
+    RUN_COMPLETE: 'Finished run'
+};
+
+let battleSocket = null;
+let battleClientId = null;
+let lastTypingSentAt = 0;
+let opponentLastTypingAt = 0;
+let opponentAction = '';
+let opponentStatusEl = null;
 
 /**
  * 1. Horizontal Split Pane (Left vs Right)
@@ -167,7 +189,10 @@ function initEditor() {
         lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => `<span>${i + 1}</span>`).join('');
     };
 
-    editor.addEventListener('input', updateLineNumbers);
+    editor.addEventListener('input', () => {
+        updateLineNumbers();
+        sendTypingPing();
+    });
     editor.addEventListener('scroll', () => {
         lineNumbers.scrollTop = editor.scrollTop;
     });
@@ -184,6 +209,111 @@ function initEditor() {
     });
 
     updateLineNumbers();
+}
+
+function initRealtimeBattle() {
+    const battleIdInput = document.getElementById('battleId');
+    const roomNameEl = document.getElementById('room-name');
+    const roomName = battleIdInput?.value || (roomNameEl ? JSON.parse(roomNameEl.textContent) : null);
+
+    if (!roomName || !('WebSocket' in window)) {
+        return;
+    }
+
+    opponentStatusEl = document.getElementById('opponentStatus');
+
+    battleClientId = window.crypto && window.crypto.randomUUID
+        ? window.crypto.randomUUID()
+        : Math.random().toString(36).slice(2);
+
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const socketUrl = `${protocol}://${window.location.host}/ws/battle/${roomName}/`;
+
+    battleSocket = new WebSocket(socketUrl);
+
+    battleSocket.onmessage = (event) => {
+        let payload = null;
+        try {
+            payload = JSON.parse(event.data);
+        } catch (error) {
+            return;
+        }
+
+        if (payload.clientId && payload.clientId === battleClientId) {
+            return;
+        }
+
+        if (payload.type === 'typing') {
+            opponentLastTypingAt = Date.now();
+            renderOpponentStatus();
+            return;
+        }
+
+        if (payload.type === 'action') {
+            opponentAction = payload.action || '';
+            renderOpponentStatus();
+        }
+    };
+
+    battleSocket.onerror = () => {
+        console.error('WebSocket error');
+    };
+
+    battleSocket.onclose = () => {
+        battleSocket = null;
+    };
+
+    setInterval(renderOpponentStatus, 500);
+}
+
+function renderOpponentStatus() {
+    if (!opponentStatusEl) {
+        return;
+    }
+
+    const isTyping = Date.now() - opponentLastTypingAt <= TYPING_TIMEOUT_MS;
+
+    if (isTyping) {
+        opponentStatusEl.textContent = 'Typing...';
+        return;
+    }
+
+    if (opponentAction) {
+        opponentStatusEl.textContent = ACTION_LABELS[opponentAction] || opponentAction;
+        return;
+    }
+
+    opponentStatusEl.textContent = 'Thinking';
+}
+
+function sendTypingPing() {
+    if (!battleSocket || battleSocket.readyState !== WebSocket.OPEN) {
+        return;
+    }
+
+    const now = Date.now();
+    if (now - lastTypingSentAt < TYPING_THROTTLE_MS) {
+        return;
+    }
+
+    lastTypingSentAt = now;
+    battleSocket.send(JSON.stringify({
+        type: 'typing',
+        clientId: battleClientId,
+        ts: now
+    }));
+}
+
+function sendAction(action) {
+    if (!battleSocket || battleSocket.readyState !== WebSocket.OPEN) {
+        return;
+    }
+
+    battleSocket.send(JSON.stringify({
+        type: 'action',
+        clientId: battleClientId,
+        action: action
+    }));
 }
 
 /**
@@ -214,6 +344,7 @@ function pad(val) {
 
 async function submitCode() {
     console.log('Code intialization bruh for submission');
+    sendAction('SUBMITTED');
     const language = document.getElementById("languageSelect").selectedOptions[0].getAttribute('value');
     const version = document.getElementById("languageSelect").selectedOptions[0].getAttribute('version');
     const code = document.getElementById("codeEditor").value;
@@ -243,8 +374,12 @@ async function submitCode() {
         const data = await response.json();
         
         if (data.status === 'AC') {
+            sendAction('AC');
             alert('Passed all Test Cases successfully!');
+        } else if (data.status) {
+            sendAction(data.status);
         } else {
+            sendAction('WA');
             alert(data.message);
         }
         
@@ -261,6 +396,7 @@ async function submitCode() {
 
 async function runCode() {
     console.log('Code intialization bruh for testcase running');
+    sendAction('RUNNING');
     const language = document.getElementById("languageSelect").selectedOptions[0].getAttribute('value');
     const version = document.getElementById("languageSelect").selectedOptions[0].getAttribute('version');
     const code = document.getElementById("codeEditor").value;
@@ -290,6 +426,7 @@ async function runCode() {
 
         const data = await response.json(); // 👈 THIS is the output
         outputArea.value = data.output;
+        sendAction('RUN_COMPLETE');
 
     } catch (error) {
         console.error("Error running code:", error);

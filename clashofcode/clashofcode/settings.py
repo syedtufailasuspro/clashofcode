@@ -25,12 +25,13 @@ SECRET_KEY = "django-insecure-ky)-zigw=&5i+^v*=r9sh)+fy)kzb)cn_)ud7c-x%pd-)zu)yk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'channels',
 
     'django_celery_beat',
@@ -49,7 +50,14 @@ INSTALLED_APPS = [
 
 
 ASGI_APPLICATION = 'clashofcode.asgi.application'
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ["redis://127.0.0.1:6379/1"],
+        },
+    },
+}
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
