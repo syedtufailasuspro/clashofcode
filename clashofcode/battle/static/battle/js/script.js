@@ -17,14 +17,14 @@ const TYPING_THROTTLE_MS = 800;
 const TYPING_TIMEOUT_MS = 2500;
 
 const ACTION_LABELS = {
-    RUNNING: 'Running code',
-    SUBMITTED: 'Submitted code',
-    FAILED_TC1: 'Failed on test 1',
-    TLE: 'TLE',
-    MLE: 'MLE',
-    WA: 'Wrong answer',
-    AC: 'Accepted',
-    RUN_COMPLETE: 'Finished run'
+    RUNNING: 'Opponent is Running code',
+    SUBMITTED: 'Opponent has Submitted their code',
+    FAILED_TC1: 'Opponents code Failed on test 1',
+    TLE: 'Opponent\'s code got TLE, lol!',
+    MLE: 'Opponent\'s code got MLE, lol!',
+    WA: 'Opponent\'s code got Wrong answer, such a loser!',
+    AC: 'Opponent\'s code got Accepted. You Lose! :(',
+    RUN_COMPLETE: 'Opponent finished running code'
 };
 
 let battleSocket = null;
@@ -180,17 +180,21 @@ function initCopyAction() {
 /**
  * 5. Simple Editor Line Numbers
  */
+
+function updateLineNumbers(editor, lineNumbers) {
+    const lines = editor.value.split('\n').length;
+    lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => `<span>${i + 1}</span>`).join('');
+
+};
+
 function initEditor() {
     const editor = document.getElementById('codeEditor');
     const lineNumbers = document.getElementById('lineNumbers');
 
-    const updateLineNumbers = () => {
-        const lines = editor.value.split('\n').length;
-        lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => `<span>${i + 1}</span>`).join('');
-    };
+    updateLineNumbers(editor, lineNumbers);
 
     editor.addEventListener('input', () => {
-        updateLineNumbers();
+        updateLineNumbers(editor, lineNumbers);
         sendTypingPing();
     });
     editor.addEventListener('scroll', () => {
@@ -208,7 +212,7 @@ function initEditor() {
         }
     });
 
-    updateLineNumbers();
+    updateLineNumbers(editor, lineNumbers);
 }
 
 function initRealtimeBattle() {
@@ -283,7 +287,7 @@ function renderOpponentStatus() {
         return;
     }
 
-    opponentStatusEl.textContent = 'Thinking';
+    opponentStatusEl.textContent = 'Opponent is Thinking...';
 }
 
 function sendTypingPing() {
@@ -465,3 +469,21 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+
+
+
+
+
+
+const resetBtn = document.getElementById('btn-reset');
+resetBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to reset your code? This cannot be undone.')) {
+        const editor = document.getElementById('codeEditor');
+        const lineNumbers = document.getElementById('lineNumbers');
+
+        document.getElementById('codeEditor').value = '';
+        updateLineNumbers(editor, lineNumbers);
+        sendTypingPing();
+    }
+});
